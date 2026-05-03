@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CALAS — Guia per a Facilitadors</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #d8e3ed;
+      --surface: #cfd9e5;
+      --text:    #1c1c1c;
+      --muted:   #7a8898;
+      --line:    rgba(28,28,28,.15);
+      --w:       760px;
+
+      --c1:#FF9800; --c2:#E74C3C; --c3:#C0392B; --c4:#1A3A52;
+      --c5:#27AE60; --c6:#d4a800; --c7:#E91E63; --c8:#8B4513;
+      --c9:#333;    --c10:#9B59B6;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 48px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-left, .nav-right {
+      display: flex; gap: 28px;
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .nav-left a:hover, .nav-right a:hover { color: var(--text); }
+    .nav-brand {
+      font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+      font-weight: 600; color: var(--text);
+    }
+
+    /* ── Page wrapper ── */
+    .page { max-width: var(--w); margin: 0 auto; padding: 120px 0 100px; }
+
+    /* ── Section ── */
+    .block { margin-bottom: 80px; }
+
+    .block-label {
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+
+    .block-rule {
+      border: none; border-top: 1px solid var(--line); margin-bottom: 32px;
+    }
+
+    /* ── Hero text ── */
+    .hero-title {
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 28px; line-height: 2;
+    }
+    .hero-title strong { color: var(--text); font-weight: 600; }
+
+    /* ── Row list (sessions / layers / schools) ── */
+    .row-item {
+      border-bottom: 1px solid var(--line);
+    }
+    .row-item:first-child { border-top: 1px solid var(--line); }
+
+    .row-header {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      align-items: center;
+      gap: 24px;
+      padding: 16px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .row-header:hover .row-title { opacity: .6; }
+
+    .row-title {
+      font-size: 13px; letter-spacing: .06em; text-transform: uppercase;
+      font-weight: 600; transition: opacity .15s;
+    }
+    .row-meta {
+      font-size: 11px; color: var(--muted); letter-spacing: .04em;
+      white-space: nowrap;
+    }
+    .row-year {
+      font-size: 11px; color: var(--muted); letter-spacing: .06em;
+      min-width: 40px; text-align: right;
+    }
+    .row-chevron {
+      font-size: 10px; color: var(--muted);
+      transition: transform .2s;
+      min-width: 16px; text-align: right;
+    }
+    .row-item.open .row-chevron { transform: rotate(180deg); }
+
+    /* ── Row body (expandable) ── */
+    .row-body {
+      display: none;
+      padding: 0 0 28px;
+    }
+    .row-item.open .row-body { display: block; }
+
+    .row-desc {
+      font-size: 12px; color: var(--muted); line-height: 1.8;
+      max-width: 520px; margin-bottom: 20px;
+    }
+
+    /* timing steps */
+    .steps { margin-bottom: 20px; }
+    .step {
+      display: flex; gap: 20px;
+      font-size: 11px; padding: 6px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-t { min-width: 32px; font-weight: 600; color: var(--text); }
+
+    /* pdf links */
+    .pdfs-label {
+      font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px; margin-top: 16px;
+    }
+    .pdf-group { margin-bottom: 12px; }
+    .pdf-group-name {
+      font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .pdf-links { display: flex; flex-direction: column; gap: 4px; }
+    .pdf-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; letter-spacing: .04em;
+      color: var(--text);
+      padding: 5px 0;
+      border-bottom: 1px solid transparent;
+      transition: border-color .15s;
+      width: fit-content;
+    }
+    .pdf-link:hover { border-color: var(--line); }
+    .pdf-link::before {
+      content: '↓';
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .pdf-link.coming {
+      color: var(--muted); cursor: default; pointer-events: none;
+    }
+    .pdf-link.coming::before { content: '—'; }
+
+    /* session image */
+    .session-img {
+      display: block;
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      filter: grayscale(20%);
+      opacity: .92;
+    }
+
+    /* sub-accordion inside body */
+    .sub-details summary {
+      list-style: none; cursor: pointer;
+      font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted); padding: 8px 0;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .sub-details summary::-webkit-details-marker { display: none; }
+    .sub-details summary::before { content: '▸'; font-size: 9px; }
+    details[open].sub-details > summary::before { content: '▾'; }
+    .sub-details summary:hover { color: var(--text); }
+    .sub-body { padding: 8px 0 4px 0; }
+
+    /* ── Layers grid ── */
+    .layers-list { display: flex; flex-direction: column; }
+    .layer-row {
+      display: grid;
+      grid-template-columns: 20px 160px 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+    }
+    .layer-row:first-child { border-top: 1px solid var(--line); }
+    .layer-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .layer-name { font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: 11px; }
+    .layer-desc { color: var(--muted); font-size: 11px; }
+
+    /* ── Schools table ── */
+    .schools-list { display: flex; flex-direction: column; }
+    .school-row {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1.4fr 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+    }
+    .school-row:first-child { border-top: 1px solid var(--line); }
+    .school-row.header-row {
+      font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); padding-bottom: 8px;
+    }
+    .school-name { font-weight: 600; letter-spacing: .04em; font-size: 12px; }
+    .school-barri { color: var(--muted); }
+    .school-element { color: var(--muted); }
+    .layer-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text);
+    }
+    .layer-tag::before {
+      content: ''; display: inline-block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor;
+    }
+    .mes {
+      font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted); text-align: right;
+    }
+
+    /* ── About ── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    }
+    .about-col h4 {
+      font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 12px;
+    }
+    .about-col p {
+      font-size: 12px; color: var(--muted); line-height: 1.8; margin-bottom: 10px;
+    }
+    .about-col ul {
+      list-style: none; font-size: 12px; color: var(--muted);
+    }
+    .about-col ul li {
+      padding: 5px 0; border-bottom: 1px solid var(--line);
+    }
+    .about-col ul li::before { content: '— '; color: var(--muted); }
+    .ext-link {
+      font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+      border-bottom: 1px solid var(--line); padding-bottom: 2px;
+      display: inline-block; margin-top: 8px;
+    }
+    .ext-link:hover { color: var(--muted); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 32px 0;
+      max-width: var(--w); margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
+      font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    footer a {
+      color: var(--text);
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1px;
+    }
+    footer a:hover { color: var(--muted); }
+
+    /* ── Responsive ── */
+    @media (max-width: 820px) {
+      .page { padding: 100px 24px 80px; }
+      footer { margin: 0 24px; }
+      .row-header { grid-template-columns: 1fr auto auto; }
+      .row-year { display: none; }
+      .school-row { grid-template-columns: 1fr 1fr auto; }
+      .school-barri, .school-element { display: none; }
+      .about-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="#sessions">Sessions</a>
+    <a href="#capas">Capes</a>
+    <a href="#escoles">Escoles</a>
+  </div>
+  <div class="nav-brand">C · A · L · A · S</div>
+  <div class="nav-right">
+    <a href="#sobre">Sobre</a>
+    <a href="https://www.construintalasala.org/" target="_blank">Web ↗</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ── INTRO ── -->
+  <div class="block">
+    <p class="hero-title">
+      <strong>CALAS — Construint a la Sala a les Escoles</strong><br>
+      Guia de materials per a facilitadors i docents &nbsp;·&nbsp;
+      Any de l'Arquitectura, Barcelona 2026 &nbsp;·&nbsp;
+      10 escoles &nbsp;·&nbsp; 3 sessions × 45 min &nbsp;·&nbsp; 500+ alumnes
+    </p>
+  </div>
+
+  <!-- ── SESSIONS ── -->
+  <div class="block" id="sessions">
+    <p class="block-label">Sessions</p>
+    <hr class="block-rule">
+
+    <!-- S1 -->
+    <div class="row-item" id="s1">
+      <div class="row-header" onclick="toggle('s1')">
+        <span class="row-title">Sessió 1 — Cartografia</span>
+        <span class="row-meta">Aula &nbsp;·&nbsp; 45 min</span>
+        <span class="row-year">S1</span>
+        <span class="row-chevron">▾</span>
+      </div>
+      <div class="row-body">
+        <img src="img/s1-cartografia.png" alt="Plànol de Barcelona amb capes" class="session-img">
+        <p class="row-desc">Els alumnes mapegen les 10 capes de Barcelona superposant acetats transparents sobre un plànol. Descobreixen com la natura, el comerç, la història i la salut conviuen al mateix espai urbà.</p>
+
+        <div class="steps">
+          <div class="step"><span class="step-t">0′</span><span>Presentació vídeo CALAS — introducció al programa</span></div>
+          <div class="step"><span class="step-t">5′</span><span>Activació: "Quines capes té el teu barri?"</span></div>
+          <div class="step"><span class="step-t">15′</span><span>Treball amb acetats i plànol en grups</span></div>
+          <div class="step"><span class="step-t">35′</span><span>Posada en comú i tancament</span></div>
+        </div>
+
+        <p class="pdfs-label">Materials per descarregar</p>
+
+        <div class="pdf-group">
+          <div class="pdf-links">
+            <a class="pdf-link" href="materials/Sessió 1/Guia Didàctica S1_rev.pdf" download>Guia Didàctica S1</a>
+          </div>
+        </div>
+
+        <details class="sub-details">
+          <summary>Plànols de Barcelona</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_Plànol_Bcn/Plànol Bcn_01_DinA0.pdf" download>Plànol Bcn 01 — DIN A0</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_Plànol_Bcn/Plànol Bcn_02_DinA0.pdf" download>Plànol Bcn 02 — DIN A0</a>
+          </div>
+        </details>
+
+        <details class="sub-details">
+          <summary>Set acetats — Ciutat Vella</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Ciutat Vella/CV_habitatge i oficines.pdf" download>Habitatge i Oficines</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Ciutat Vella/CV_infraestructures.pdf" download>Infraestructures</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Ciutat Vella/CV_equipaments.pdf" download>Equipaments</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Ciutat Vella/CV_natura.pdf" download>Natura</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Ciutat Vella/CV_espai public.pdf" download>Espai Públic</a>
+          </div>
+        </details>
+
+        <details class="sub-details">
+          <summary>Set acetats — Eixample</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Eixample/E_habitatge i oficines.pdf" download>Habitatge i Oficines</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Eixample/E_equipaments.pdf" download>Equipaments</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Eixample/E_natura.pdf" download>Natura</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Eixample/E_espai public.pdf" download>Espai Públic</a>
+          </div>
+        </details>
+
+        <details class="sub-details">
+          <summary>Set acetats — Vila de Gràcia</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Vila de Gràcia/G_habitatge i oficines.pdf" download>Habitatge i Oficines</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Vila de Gràcia/G_equipaments.pdf" download>Equipaments</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Vila de Gràcia/G_natura.pdf" download>Natura</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Vila de Gràcia/G_espai public.pdf" download>Espai Públic</a>
+          </div>
+        </details>
+
+        <details class="sub-details">
+          <summary>Set acetats — Sants-Montjuïc</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Sants_Montjuic/SM_habitatge i oficines.pdf" download>Habitatge i Oficines</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Sants_Montjuic/SM_equipaments.pdf" download>Equipaments</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Sants_Montjuic/SM_natura.pdf" download>Natura</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Sants_Montjuic/SM_espai public.pdf" download>Espai Públic</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Sants_Montjuic/SM_infraestructura.pdf" download>Infraestructures</a>
+          </div>
+        </details>
+
+        <details class="sub-details">
+          <summary>Set acetats — Horta-Guinardó</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Horta_Guinardó/HG_habitatge i oficines.pdf" download>Habitatge i Oficines</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Horta_Guinardó/HG_equipaments.pdf" download>Equipaments</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Horta_Guinardó/HG_natura.pdf" download>Natura</a>
+            <a class="pdf-link" href="materials/Sessió 1/S1.2_set_acetatos/Horta_Guinardó/HG_espai public.pdf" download>Espai Públic</a>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- S2 -->
+    <div class="row-item" id="s2">
+      <div class="row-header" onclick="toggle('s2')">
+        <span class="row-title">Sessió 2 — Textures</span>
+        <span class="row-meta">Barri &nbsp;·&nbsp; 45 min</span>
+        <span class="row-year">S2</span>
+        <span class="row-chevron">▾</span>
+      </div>
+      <div class="row-body">
+        <img src="img/s2-textures.png" alt="Frotatge sobre escorça d'arbre al barri" class="session-img">
+        <p class="row-desc">Sortida al barri. Observació de l'element característic assignat. Cerca de 3 textures de capes diferents usant cartes-repte i captura per frotatge.</p>
+
+        <div class="steps">
+          <div class="step"><span class="step-t">0′</span><span>Briefing i repartiment de cartes-repte</span></div>
+          <div class="step"><span class="step-t">5′</span><span>Recorregut i exploració al barri</span></div>
+          <div class="step"><span class="step-t">30′</span><span>Frotatge i documentació de textures</span></div>
+          <div class="step"><span class="step-t">40′</span><span>Retorn i posada en comú</span></div>
+        </div>
+
+        <p class="pdfs-label">Materials per descarregar</p>
+
+        <div class="pdf-group">
+          <div class="pdf-links">
+            <a class="pdf-link" href="materials/Sessió 2/Guia Didàctica S2_rev.pdf" download>Guia Didàctica S2</a>
+          </div>
+        </div>
+
+        <details class="sub-details">
+          <summary>Elements arquitectònics (annex)</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 2/S2.1_Exploració elements arquitectònics/Annex S2_01_Elements arquitectònics escoles MAIG.pdf" download>Annex Elements — Escoles de Maig</a>
+            <a class="pdf-link" href="materials/Sessió 2/S2.1_Exploració elements arquitectònics/Annex S2_01_Elements arquitectònics escoles OCTUBRE.pdf" download>Annex Elements — Escoles d'Octubre</a>
+          </div>
+        </details>
+
+        <details class="sub-details">
+          <summary>Cartes repte per capa</summary>
+          <div class="sub-body pdf-links">
+            <a class="pdf-link" href="materials/Sessió 2/S2.2_Cartes reptes textures/S2.2_cartes reptes natura.pdf" download>Natura</a>
+            <a class="pdf-link" href="materials/Sessió 2/S2.2_Cartes reptes textures/S2.2_cartes reptes espai public.pdf" download>Espai Públic</a>
+            <a class="pdf-link" href="materials/Sessió 2/S2.2_Cartes reptes textures/S2.2_cartes reptes habitatge.pdf" download>Habitatge</a>
+            <a class="pdf-link" href="materials/Sessió 2/S2.2_Cartes reptes textures/S2.2_cartes reptes infraestructures.pdf" download>Infraestructures</a>
+            <a class="pdf-link" href="materials/Sessió 2/S2.2_Cartes reptes textures/S2.2_cartes reptes cultura.pdf" download>Cultura</a>
+            <a class="pdf-link" href="materials/Sessió 2/S2.2_Cartes reptes textures/S2.2_cartes reptes salut.pdf" download>Salut</a>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- S3 -->
+    <div class="row-item" id="s3">
+      <div class="row-header" onclick="toggle('s3')">
+        <span class="row-title">Sessió 3 — Maqueta</span>
+        <span class="row-meta">Aula &nbsp;·&nbsp; 45 min</span>
+        <span class="row-year">S3</span>
+        <span class="row-chevron">▾</span>
+      </div>
+      <div class="row-body">
+        <img src="img/s3-maqueta.jpeg" alt="Nens i nenes construint la maqueta" class="session-img">
+        <p class="row-desc">Prototipatge amb materials reciclats de l'element característic del barri, integrant les observacions de les sessions anteriors. Reflexió sobre sostenibilitat i futur urbà.</p>
+
+        <div class="steps">
+          <div class="step"><span class="step-t">0′</span><span>Revisió de textures recollides a S2 — inspiració</span></div>
+          <div class="step"><span class="step-t">10′</span><span>Construcció de la maqueta en grups</span></div>
+          <div class="step"><span class="step-t">35′</span><span>Exposició grupal i tancament del programa</span></div>
+        </div>
+
+        <p class="pdfs-label">Materials per descarregar</p>
+        <div class="pdf-group">
+          <div class="pdf-links">
+            <span class="pdf-link coming">Guia Didàctica S3 — pròximament</span>
+          </div>
+        </div>
+
+        <p class="pdfs-label" style="margin-top:20px;">Materials físics necessaris</p>
+        <div class="steps">
+          <div class="step"><span class="step-t">—</span><span>Cartró reciclat, paper de diari, tisores, cola, cinta adhesiva</span></div>
+          <div class="step"><span class="step-t">—</span><span>Pintures i retoladors</span></div>
+          <div class="step"><span class="step-t">—</span><span>Fulls de frotatge de la Sessió 2</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 10 CAPES ── -->
+  <div class="block" id="capas">
+    <p class="block-label">Marc conceptual</p>
+    <hr class="block-rule">
+
+    <div class="layers-list">
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c1)"></div>
+        <span class="layer-name">Memòria Històrica</span>
+        <span class="layer-desc">Muralla medieval · Com la forma de la ciutat és resultat de la seva història</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c2)"></div>
+        <span class="layer-name">Mercats</span>
+        <span class="layer-desc">El mercat com a infraestructura social · Xarxa de mercats municipals de Barcelona</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c3)"></div>
+        <span class="layer-name">Esports</span>
+        <span class="layer-desc">L'esport per a tothom · Espais formals i informals de joc i moviment</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c4)"></div>
+        <span class="layer-name">Escoles</span>
+        <span class="layer-desc">Una escola per a tots · L'escola com a peça urbana oberta al barri</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c5)"></div>
+        <span class="layer-name">Naturalesa</span>
+        <span class="layer-desc">La ciutat i el bosc · Corredors ecològics i frontera amb Collserola</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c6)"></div>
+        <span class="layer-name">Espai Públic</span>
+        <span class="layer-desc">La plaça ideal dels infants · L'espai públic com a dret democràtic</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c7)"></div>
+        <span class="layer-name">Salut</span>
+        <span class="layer-desc">Un hospital amable · Entorns curatius i arquitectura sanitària</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c8)"></div>
+        <span class="layer-name">Infraestructures</span>
+        <span class="layer-desc">La ciutat que no es veu · Xarxes invisibles d'aigua, energia i mobilitat</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c9)"></div>
+        <span class="layer-name">Habitatge</span>
+        <span class="layer-desc">Una casa per a tothom · L'habitatge com a dret i peça de ciutat</span>
+      </div>
+      <div class="layer-row">
+        <div class="layer-dot" style="background:var(--c10)"></div>
+        <span class="layer-name">Cultura</span>
+        <span class="layer-desc">La ciutat com a escenari · Equipaments culturals i cultura de proximitat</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCOLES ── -->
+  <div class="block" id="escoles">
+    <p class="block-label">Distribució — 10 escoles · 10 barris</p>
+    <hr class="block-rule">
+
+    <div class="schools-list">
+      <div class="school-row header-row">
+        <span>Escola</span>
+        <span>Barri</span>
+        <span>Capa</span>
+        <span>Element</span>
+        <span>Mes</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Baixeras</span>
+        <span class="school-barri">Ciutat Vella</span>
+        <span class="layer-tag" style="color:var(--c1)">Memòria Històrica</span>
+        <span class="school-element">Muralla medieval</span>
+        <span class="mes">Maig</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Fructuós-Gelabert</span>
+        <span class="school-barri">Eixample</span>
+        <span class="layer-tag" style="color:var(--c10)">Cultura</span>
+        <span class="school-element">La Sedeta</span>
+        <span class="mes">Maig</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Jaume I</span>
+        <span class="school-barri">Sants-Montjuïc</span>
+        <span class="layer-tag" style="color:var(--c8)">Infraestructures</span>
+        <span class="school-element">Estació de Sants</span>
+        <span class="mes">Maig</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Rius i Taulet</span>
+        <span class="school-barri">Gràcia</span>
+        <span class="layer-tag" style="color:var(--c6)">Espai Públic</span>
+        <span class="school-element">Places de Gràcia</span>
+        <span class="mes">Maig</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola del Mar</span>
+        <span class="school-barri">Horta-Guinardó</span>
+        <span class="layer-tag" style="color:var(--c7)">Salut</span>
+        <span class="school-element">Hospital Sant Pau</span>
+        <span class="mes">Maig</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Paideia</span>
+        <span class="school-barri">Les Corts</span>
+        <span class="layer-tag" style="color:var(--c3)">Esports</span>
+        <span class="school-element">Parc de calistènia</span>
+        <span class="mes">Octubre</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Nausica</span>
+        <span class="school-barri">Sarrià-Sant Gervasi</span>
+        <span class="layer-tag" style="color:var(--c2)">Mercats</span>
+        <span class="school-element">Mercat Galvany</span>
+        <span class="mes">Octubre</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Àgora</span>
+        <span class="school-barri">Nou Barris</span>
+        <span class="layer-tag" style="color:var(--c5)">Naturalesa</span>
+        <span class="school-element">Parc de la Guineueta</span>
+        <span class="mes">Octubre</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola La Maquinista</span>
+        <span class="school-barri">Sant Andreu</span>
+        <span class="layer-tag" style="color:var(--c9)">Habitatge</span>
+        <span class="school-element">Casa Bloc</span>
+        <span class="mes">Octubre</span>
+      </div>
+      <div class="school-row">
+        <span class="school-name">Escola Bogatell</span>
+        <span class="school-barri">Sant Martí</span>
+        <span class="layer-tag" style="color:var(--c4)">Escoles</span>
+        <span class="school-element">Col·legi Pompeu i Fabra</span>
+        <span class="mes">Octubre</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SOBRE ── -->
+  <div class="block" id="sobre">
+    <p class="block-label">Sobre el programa</p>
+    <hr class="block-rule">
+
+    <div class="about-grid">
+      <div class="about-col">
+        <h4>Construint a la Sala</h4>
+        <p>Associació sense ànim de lucre fundada el 2007 dedicada a apropar l'arquitectura a infants de 7 a 12 anys. Més de 10.000 alumnes participants i 1.500+ arquitectes, pedagogs i artistes voluntaris.</p>
+        <p>CALAS porta el programa directament a les escoles públiques de Barcelona en el marc de l'Any de l'Arquitectura 2026.</p>
+        <a class="ext-link" href="https://www.construintalasala.org/" target="_blank">construintalasala.org ↗</a>
+      </div>
+      <div class="about-col">
+        <h4>Objectius del programa</h4>
+        <ul>
+          <li>Entendre l'arquitectura com allò que algú va decidir construir per viure millor</li>
+          <li>Veure la ciutat com 10 capes superposades, no com edificis aïllats</li>
+          <li>Connectar teoria (mapes) → observació (textures) → creació (maqueta)</li>
+          <li>Reconèixer-se com a futurs arquitectes de la pròpia ciutat</li>
+        </ul>
+        <h4 style="margin-top:24px;">Equip per sessió</h4>
+        <ul>
+          <li>1 docent referent de l'escola</li>
+          <li>2–3 voluntaris CALAS per sessió</li>
+          <li>2 grups de 25 alumnes per escola</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>CALAS · Barcelona 2026 · Guia per a facilitadors i docents</span>
+    <span>
+      Created with love by
+      <a href="https://santifu.github.io/" target="_blank">Santi Fuentemilla</a>
+      &amp; Julia Leirado ·
+      <a href="https://www.construintalasala.org/" target="_blank">Construint a la Sala</a> ·
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>
+    </span>
+  </footer>
+
+</div>
+
+<script>
+  function toggle(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+  // Open S1 by default
+  document.getElementById('s1').classList.add('open');
+</script>
+
+</body>
+</html>
