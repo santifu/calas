@@ -168,6 +168,23 @@
     }
     .pdf-link.coming::before { content: '—'; }
 
+    /* video embed */
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .video-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
     /* session image */
     .session-img {
       display: block;
@@ -343,7 +360,7 @@
         <span class="row-chevron">▾</span>
       </div>
       <div class="row-body">
-        <img src="img/s1-cartografia.png" alt="Plànol de Barcelona amb capes" class="session-img">
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/nETwB0sw6h4" title="Vídeo introductori CALAS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
         <p class="row-desc">Els alumnes mapegen les 10 capes de Barcelona superposant acetats transparents sobre un plànol. Descobreixen com la natura, el comerç, la història i la salut conviuen al mateix espai urbà.</p>
 
         <div class="steps">
@@ -644,7 +661,7 @@
         <span class="mes">Octubre</span>
       </div>
       <div class="school-row">
-        <span class="school-name">Escola Bogatell</span>
+        <span class="school-name">A definir</span>
         <span class="school-barri">Sant Martí</span>
         <span class="layer-tag" style="color:var(--c4)">Escoles</span>
         <span class="school-element">Col·legi Pompeu i Fabra</span>
@@ -676,7 +693,7 @@
         <h4 style="margin-top:24px;">Equip per sessió</h4>
         <ul>
           <li>1 docent referent de l'escola</li>
-          <li>1 voluntaris CALAS per sessió</li>
+          <li>2–3 voluntaris CALAS per sessió</li>
           <li>2 grups de 25 alumnes per escola</li>
         </ul>
       </div>
